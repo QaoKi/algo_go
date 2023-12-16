@@ -1,9 +1,4 @@
-#include <iostream>
-#include <string>
-#include <vector>
-#include <algorithm>
-using namespace std;
-
+package main
 
 /*
 	题目： leetcode 279
@@ -15,7 +10,7 @@ using namespace std;
 
 		示例 1：
 			输入：n = 12
-			输出：3 
+			输出：3
 			解释：12 = 4 + 4 + 4
 		示例 2：
 			输入：n = 13
@@ -38,30 +33,36 @@ using namespace std;
 				而且 M 肯定是小于等于n的，所以可以从 j = 1 开始遍历，求出每一个完全平方数 j*j，
 				当 j*j 小于等于 n 时，去作为 M 计算
 		得出状态转移方程
-			dp[i] = min(dp[i], dp[i - j*j] + 1), 1 <= j*j <= n 
-		
+			dp[i] = min(dp[i], dp[i - j*j] + 1), 1 <= j*j <= i
+
 		base case:
-			因为状态转移方程中用到了 min()，所以 dp 数组的值要初始化为无穷大，和零钱兑换一样的，不能直接定位正无穷，
-				因为后面可能会出现 dp[i - j * j] + 1 的情况，如果此时 dp[i - j * j] 等于正无穷，就越界了。
+			因为状态转移方程中用到了 min()，所以 dp 数组的值要初始化为无穷大，和零钱兑换一样的，
 				可以设为 n+1，最多需要 n 个 1，不会超过 n+1，设为 n+1 就相当于设为正无穷
 			当 n 等于0 时，dp[0] = 0
 */
 
-class Solution {
-public:
-    int numSquares(int n) {
-		if(n <= 0) return 0;
-		vector<int> dp(n + 1, n + 1);
-		dp[0] = 0;
-		for (int i = 1; i <= n; i++) {
-			for (int j = 1; i >= j * j; j++) {
-				dp[i] = min(dp[i], dp[i - j * j] + 1);
-			}
-		}
+func min(a, b int) int {
+	if a > b {
+		return b
+	}
+	return a
+}
 
-		return dp[n];
-    }
-};
+func numSquares(n int) int {
+	dp := make([]int, n+1)
+	for i := 0; i <= n; i++ {
+		dp[i] = n + 1
+	}
+
+	// base case
+	dp[0] = 0
+	for i := 1; i <= n; i++ {
+		for j := 1; j*j <= i; j++ {
+			dp[i] = min(dp[i], dp[i-j*j]+1)
+		}
+	}
+	return dp[n]
+}
 
 /*
 	2，完全背包问题
@@ -70,42 +71,35 @@ public:
 			dp[i][j] = x，若只使用前i个硬币（物品），当背包容量为j时，最少需要 x 个物品（硬币）可以装满背包。
 		在这题中，我们依然不知道 i 有多少，不过我们知道，i*i要小于等于j才有意义，
 			根据这条性质，我们可以求出所有可能会用到的完全平方数
-		
+
 */
 
-int dp2(int n) {
-	if(n <= 0) return 0;
-
+func numSquares1(n int) int {
 	//存放所有可能用到的完全平方数
-	vector<int> choices;
-	int res = 1;
+	nums := []int{}
 
-	while(n >= res * res) {
-		choices.push_back(res * res);
-		res++;
+	i := 1
+	for n >= i*i {
+		nums = append(nums, i*i)
+		i++
 	}
 
-	vector<int> dp(n + 1, n + 1);
-	dp[0] = 0;
+	dp := make([]int, n+1)
+	for i := 0; i < n+1; i++ {
+		dp[i] = n + 1
+	}
 
-	for (int i = 1; i <= choices.size(); i++) {
-		for (int j = 1; j <= n; j++) {
-			//不选
-            int no_in = dp[j];
-            int in = INT_MAX;
-            if(j >= choices[i - 1]) {
-                //选出来
-                in = dp[j - choices[i - 1]] + 1;
-            }
-
-            dp[j] = min(no_in, in);
+	// base case
+	dp[0] = 0
+	for i := 1; i <= len(nums); i++ {
+		for j := 1; j <= n; j++ {
+			if j >= nums[i-1] {
+				dp[j] = min(dp[j], dp[j-nums[i-1]]+1)
+			}
 		}
 	}
-
-	return dp[n];
+	return dp[n]
 }
 
-int main()
-{
-	return 0;
+func main() {
 }

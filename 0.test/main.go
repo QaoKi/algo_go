@@ -2,32 +2,15 @@ package main
 
 import (
 	"fmt"
+	"sort"
 )
 
-func dfs(nums []int, target, index, sum int, ret *int) {
-
-	if index == len(nums) {
-		if sum == target {
-			*ret++
-		}
-
-		return
-	}
-
-	dfs(nums, target, index+1, sum+nums[index], ret)
-	dfs(nums, target, index+1, sum-nums[index], ret)
-}
-
-func findTargetSumWays(nums []int, target int) int {
-	ret := 0
-	dfs(nums, target, 0, 0, &ret)
-	return ret
-}
-
 func main() {
-	nums := []int{1}
-	target := 1
+	strs := []string{"fv", "ab", "ee", "ti", "q", "ta"}
 
-	ret := findTargetSumWays(nums, target)
-	fmt.Println(ret)
+	//sort.Ints(nums)
+	sort.Slice(strs, func(i, j int) bool {
+		return strs[i] < strs[j]
+	})
+	fmt.Println(strs)
 }
