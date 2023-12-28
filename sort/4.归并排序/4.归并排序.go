@@ -1,8 +1,4 @@
-#include <iostream>
-#include <string>
-#include <vector>
-
-using namespace std;
+package main
 
 /*
 	可以用 leetcode 912 测试代码
