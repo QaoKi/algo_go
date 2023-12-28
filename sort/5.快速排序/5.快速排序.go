@@ -1,8 +1,4 @@
-#include <iostream>
-#include <string>
-#include <vector>
-
-using namespace std;
+package main
 
 /*
 	可以用 leetcode 912 测试代码
@@ -25,38 +21,40 @@ using namespace std;
 			并让pr--，即让大于区域向左增加一个，此时先不让curr++，先判断此时交换过来的值的大小
 		当curr和pr相碰时停止
 */
-void sort(vector<int> &nums, int L, int R) {
 
-	if (L >= R) return;
+func sort(nums []int, L, R int) {
+	//终止条件
+	if L >= R {
+		return
+	}
 
 	//每次取最后一个值作为num值
-	int num = nums[R];
-	int pl = L - 1; //指向小于num值区域的最后一个值
-	int pr = R + 1; //指向大于num值区域的第一个值
-	int curr = L;	//当前值的下标，遍历的指针
+	num := nums[R]
+	l := L - 1 //指向小于num值区域的最后一个值
+	r := R + 1 //指向大于num值区域的第一个值
+	curr := L  //当前值的下标，遍历的指针
 
 	//遍历所有的数，小于num的放到小于区域，大于的放到大于区域，等于放到中间
-	while (curr < pr) {
-		if (nums[curr] < num)
-			swap(nums[curr++], nums[++pl]);
-		else if (nums[curr] == num)
-			curr++;
-		else
+	for curr < r {
+		if nums[curr] == num {
+			curr++
+		} else if nums[curr] < num {
+			l++
+			nums[l], nums[curr] = nums[curr], nums[l]
+			curr++
+		} else {
+			r--
+			nums[r], nums[curr] = nums[curr], nums[r]
 			//curr先不加1，再判断换过来的这个数的值
-			swap(nums[curr], nums[--pr]);
+		}
 	}
-	//到这时，数组从L-pl的数据是小于num的数，pr-R是大于num的值
+
+	//到这时，数组从L-l的数据是小于num的数，pr-r是大于num的值
 	//再继续拆分，直到剩一个数
-	sort(nums, L, pl);
-	sort(nums, pr, R);
+	sort(nums, L, l)
+	sort(nums, r, R)
 }
 
-vector<int> sortArray(vector<int>& nums) {
-	sort(nums, 0, nums.size() - 1);
-	return nums;
-}
-
-int main()
-{
-	return 0;
+func sortArray(nums []int) {
+	sort(nums, 0, len(nums)-1)
 }

@@ -14,58 +14,54 @@ package main
 		在任意时刻，CPU 只会有一个函数在执行，也就只会有一个临时的内存空间在使用。
 		临时内存空间最大也不会超过 n 个数据的大小，所以空间复杂度是 O(n)。
 */
-void merge(vector<int>& nums, int L, int mid, int R) {
+
+func merge(nums []int, L, mid, R int) {
 	//L和R是数组arr的第一个值下标和最后一个值下标
-	int pl = L;		  //指针指向左边数组的第一个元素
-	int pr = mid + 1; //指针指向右边数组的第一个元素
-	
-	vector<int> help(R - L + 1, 0);//辅助数组，保存这两个数组排完序以后的数
-	int index = 0;	  //数组 help 的下标
-	while (pl <= mid && pr <= R) {	
-		//当pl指向的值大于pr指向的值，返回pr指向的值，否则返回pl指向的值
-		help[index++] = nums[pl] <= nums[pr] ? nums[pl++] : nums[pr++];
+	help := []int{}
+	l, r := L, mid+1 //指针指向左边数组的第一个元素 和 右边数组的第一个元素
+	for l <= mid && r <= R {
+		if nums[l] <= nums[r] {
+			help = append(help, nums[l])
+			l++
+		} else {
+			help = append(help, nums[r])
+			r++
+		}
 	}
 
-	//把数组中没有处理完的数依次放到help中
-	while (pl <= mid) 
-		help[index++] = nums[pl++];
+	for l <= mid {
+		help = append(help, nums[l])
+		l++
+	}
 
-	while (pr <= R) 
-		help[index++] = nums[pr++];
+	for r <= R {
+		help = append(help, nums[r])
+		r++
+	}
 
 	//拷贝回原来的数组，这里的下标处理要注意
-	for (int i = 0; i < index; i++)
-		nums[L + i] = help[i];
-}
-//传入数组的第一个值的下标和最后一个值的下标
-void sort(vector<int>& nums, int L, int R) {
-	//终止条件
-	if (L >= R) return;
-	/*
-		小技巧，防止溢出：mid = L + (R-L)/2，
-		a/2 == a >> 1  a除以2，等于a右移一位，所以  mid = L + (R-L) >> 1，位运算比算数运算快很多
-		但是，(R-L) >> 1 需要单独算，如果放到一起，运行会出错
-			int temp = (R-L) >> 1;
-			int mid  = L + temp;
-	*/
-	int temp = (R - L) >> 1;
-	int mid = L + temp;
+	for i := 0; i < len(help); i++ {
+		nums[L+i] = help[i]
+	}
 
+}
+
+//传入数组的第一个值的下标和最后一个值的下标
+func sort(nums []int, L, R int) {
+	//终止条件
+	if L >= R {
+		return
+	}
+
+	mid := L + (R-L)/2
 	//将数组分为两部分，一部分为 L到mid，一部分为 mid+1到R
 	//再接着拆分，直到拆分到每一部分只剩一个数，即当L=R的时候停止
-	sort(nums, L, mid);
-	sort(nums, mid + 1, R);
-
+	sort(nums, L, mid)
+	sort(nums, mid+1, R)
 	//把每一个子部分，两两按大小合并,一直到最后合并成总的
-	merge(nums, L, mid, R);
+	merge(nums, L, mid, R)
 }
 
-vector<int> sortArray(vector<int>& nums) {
-	sort(nums, 0, nums.size() - 1);
-	return nums;
-}
-
-int main()
-{
-	return 0;
+func sortArray(nums []int) {
+	sort(nums, 0, len(nums)-1)
 }
